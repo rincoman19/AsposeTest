@@ -4,7 +4,7 @@ namespace Excel
     {
         static void Main(string[] args)
         {
-            Test.Run();
+            Test.CleanupRun();
         }
     }
 }

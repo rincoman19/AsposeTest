@@ -39,5 +39,77 @@ namespace Excel
                 );
             }
         }
+
+        public static void CleanupRun()
+        {
+            Workbook workbook = new Workbook();
+            Worksheet worksheet = workbook.Worksheets[0];
+            Cells cells = worksheet.Cells;
+
+            // Simulate headers (14 columns like your real file)
+            for (int col = 0; col < 14; col++)
+            {
+                cells[0, col].PutValue("Col " + col);
+            }
+
+            // Row 1 - FULL data
+            for (int col = 0; col < 14; col++)
+            {
+                cells[1, col].PutValue("R1C" + col);
+            }
+
+            // Row 2 - LAST COLUMN EMPTY (like your problematic case)
+            for (int col = 0; col < 13; col++)
+            {
+                cells[2, col].PutValue("R2C" + col);
+            }
+            // cells[2,13] intentionally left empty
+
+            // Row 3 - VALID DATA AFTER empty-last-column row
+            for (int col = 0; col < 14; col++)
+            {
+                cells[3, col].PutValue("R3C" + col);
+            }
+            
+            // Export like Bizagi does
+            DataTable dt = cells.ExportDataTableAsString(0, 0, 10, 14);
+
+            Console.WriteLine("=== BEFORE CLEANUP ===");
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                Console.WriteLine(
+                    $"Row {i}: " + string.Join("|", dt.Rows[i].ItemArray)
+                );
+            }
+
+            // Apply YOUR EXACT cleanup logic
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                bool isEmpty = true;
+
+                for (int j = 0; j < dt.Columns.Count; j++)
+                {
+                    if (!string.IsNullOrEmpty(dt.Rows[i][j].ToString()))
+                    {
+                        isEmpty = false;
+                        break;
+                    }
+                }
+
+                if (isEmpty == true)
+                {
+                    dt.Rows.RemoveAt(i);
+                    i--;
+                }
+            }
+
+            Console.WriteLine("\n=== AFTER CLEANUP ===");
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                Console.WriteLine(
+                    $"Row {i}: " + string.Join("|", dt.Rows[i].ItemArray)
+                );
+            }
+        }
     }
 }
