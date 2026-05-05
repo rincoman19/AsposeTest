@@ -24,7 +24,7 @@ namespace Excel
             cells["C1"].PutValue("Columna 3");
             cells["A2"].PutValue("12121212");
             cells["B2"].PutValue("");
-            cells["C2"].PutValue("");
+            cells["C2"].PutValue(null);
             cells["A3"].PutValue("04/05/2026");
             cells["B3"].PutValue(4);
 
@@ -63,6 +63,7 @@ namespace Excel
             {
                 cells[2, col].PutValue("R2C" + col);
             }
+            cells["C13"].PutValue(null);
             // cells[2,13] intentionally left empty
 
             // Row 3 - VALID DATA AFTER empty-last-column row
@@ -72,7 +73,7 @@ namespace Excel
             }
             
             // Export like Bizagi does
-            DataTable dt = cells.ExportDataTableAsString(0, 0, 10, 14);
+            DataTable dt = cells.ExportDataTableAsString(0, 0, 10, 14, true);
 
             Console.WriteLine("=== BEFORE CLEANUP ===");
             for (int i = 0; i < dt.Rows.Count; i++)
